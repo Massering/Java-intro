@@ -5,26 +5,28 @@ public class ReverseSumHex {
     public static void main(String[] args) {
         ArrayList<IntList> list = new ArrayList<>();
         int maxLength = 0;
-
-        Scanner scanner = new Scanner(System.in);
         int linesCount = 0;
 
-        IntList ints = new IntList();
-        while (scanner.hasNext()) {
-            String word = scanner.next();
+        try (Scanner scanner = new Scanner(System.in)) {
+            IntList ints = new IntList();
+            while (scanner.hasNext()) {
+                String word = scanner.next();
 
-            if (Scanner.isLineSeparator(word)) {
+                if (Scanner.isLineSeparator(word)) {
+                    maxLength = Math.max(maxLength, ints.size());
+                    list.add(ints);
+                    ints = new IntList();
+                } else {
+                    ints.append(Integer.parseUnsignedInt(word, 16));
+                }
+            }
+            if (ints.size() > 0) {
                 maxLength = Math.max(maxLength, ints.size());
                 list.add(ints);
-                ints = new IntList();
             }
-            else {
-                ints.append(Integer.parseUnsignedInt(word, 16));
-            }
-        }
-        if (ints.size() > 0) {
-            maxLength = Math.max(maxLength, ints.size());
-            list.add(ints);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            return;
         }
 
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out))) {

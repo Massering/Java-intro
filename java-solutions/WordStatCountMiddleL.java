@@ -21,6 +21,9 @@ public final class WordStatCountMiddleL {
         } catch (FileNotFoundException e) {
             System.err.println("Input file not found: " + e.getMessage());
             return;
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            return;
         }
 
         arrayWords.sort(new Comparator<>() {

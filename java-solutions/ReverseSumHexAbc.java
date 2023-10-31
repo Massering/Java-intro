@@ -6,29 +6,31 @@ public class ReverseSumHexAbc {
         ArrayList<IntList> list = new ArrayList<>();
         int maxLength = 0;
 
-        Scanner scanner = new Scanner(System.in);
-        int linesCount = 0;
+        try (Scanner scanner = new Scanner(System.in)) {
 
-        IntList ints = new IntList();
-        while (scanner.hasNext()) {
-            String word = scanner.next();
+            IntList ints = new IntList();
+            while (scanner.hasNext()) {
+                String word = scanner.next();
 
-            if (Scanner.isLineSeparator(word)) {
+                if (Scanner.isLineSeparator(word)) {
+                    maxLength = Math.max(maxLength, ints.size());
+                    list.add(ints);
+                    ints = new IntList();
+                } else {
+                    parseWord(word, ints);
+                }
+            }
+            if (ints.size() > 0) {
                 maxLength = Math.max(maxLength, ints.size());
                 list.add(ints);
-                ints = new IntList();
             }
-            else {
-                parseWord(word, ints);
-            }
-        }
-        if (ints.size() > 0) {
-            maxLength = Math.max(maxLength, ints.size());
-            list.add(ints);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            return;
         }
 
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out))) {
-            countSums(writer, list, maxLength, linesCount);
+            countSums(writer, list, maxLength);
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
@@ -52,10 +54,10 @@ public class ReverseSumHexAbc {
         }
     }
 
-    public static void countSums(BufferedWriter writer, ArrayList<IntList> list, int maxLength, int linesCount) throws IOException {
+    public static void countSums(BufferedWriter writer, ArrayList<IntList> list, int maxLength) throws IOException {
         int[] upSum = new int[maxLength];   // сумма столбца сверху
 
-        for (int i = 0; i < linesCount; i++) {
+        for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < list.get(i).size(); j++) {
                 IntList temp = list.get(i);
                 int x = temp.get(j);

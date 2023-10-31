@@ -13,3 +13,4 @@ _*
 # MY: Do not store my iml file and jar tests
 prog-intro.iml
 *.jar
+base*

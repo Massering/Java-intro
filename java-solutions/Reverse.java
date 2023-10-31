@@ -5,21 +5,24 @@ public class Reverse {
     public static void main(String[] args) {
         ArrayList<IntList> list = new ArrayList<>();
 
-        Scanner scanner = new Scanner(System.in);
-        StringBuilder builder = new StringBuilder();
+        try(Scanner scanner = new Scanner(System.in)) {
+            StringBuilder builder = new StringBuilder();
 
-        IntList ints = new IntList();
-        while (scanner.hasNext()) {
-            String word = scanner.next();
-            if (Scanner.isLineSeparator(word)) {
-                list.add(ints);
-                ints = new IntList();
+            IntList ints = new IntList();
+            while (scanner.hasNext()) {
+                String word = scanner.next();
+                if (Scanner.isLineSeparator(word)) {
+                    list.add(ints);
+                    ints = new IntList();
+                }
+
+                parseWord(word, ints, builder);
             }
-
-            parseWord(word, ints, builder);
-        }
-        if (ints.size() > 0) {
-            list.add(ints);
+            if (ints.size() > 0) {
+                list.add(ints);
+            }
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
         }
 
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out))) {

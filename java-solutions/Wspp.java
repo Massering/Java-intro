@@ -22,8 +22,8 @@ public final class Wspp {
                     wordNumber = addWord(word.toLowerCase(), words, arrayWords, wordNumber);
                 }
             }
-        } catch (FileNotFoundException e) {
-            System.err.println("Input file not found: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
             return;
         }
 

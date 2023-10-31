@@ -30,7 +30,7 @@ public class Scanner implements AutoCloseable {
         }
     }
 
-    public boolean hasNext() {
+    public boolean hasNext() throws IOException {
         if (lastCall == HAS_NEXT) {
             return true;
         }
@@ -45,7 +45,7 @@ public class Scanner implements AutoCloseable {
         return false;
     }
 
-    public String next() {
+    public String next() throws IOException {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
@@ -84,7 +84,7 @@ public class Scanner implements AutoCloseable {
         return Character.getType(c) == Character.SPACE_SEPARATOR;
     }
 
-    public boolean hasNextLine() {
+    public boolean hasNextLine() throws IOException {
         if (lastCall == HAS_NEXT_LINE) {
             return true;
         }
@@ -112,7 +112,7 @@ public class Scanner implements AutoCloseable {
         return true;
     }
 
-    public String nextLine() {
+    public String nextLine() throws IOException {
         if (!hasNextLine()) {
             throw new NoSuchElementException();
         }
@@ -138,7 +138,7 @@ public class Scanner implements AutoCloseable {
         return false;
     }
 
-    public boolean hasNextWord() {
+    public boolean hasNextWord() throws IOException {
         if (lastCall == HAS_NEXT_WORD) {
             return true;
         }
@@ -152,7 +152,7 @@ public class Scanner implements AutoCloseable {
         return false;
     }
 
-    public String nextWord() {
+    public String nextWord() throws IOException {
         if (!hasNextWord()) {
             throw new NoSuchElementException();
         }
@@ -195,12 +195,8 @@ public class Scanner implements AutoCloseable {
                 c == '\'';
     }
 
-    private boolean updateBuffer() {
-        try {
-            size = reader.read(buffer, 0, BUFFER_LENGTH);
-        } catch (IOException e) {
-            return false;
-        }
+    private boolean updateBuffer() throws IOException {
+        size = reader.read(buffer);
         if (size == -1) {
             return false;
         }
@@ -208,7 +204,7 @@ public class Scanner implements AutoCloseable {
         return true;
     }
 
-    private boolean isHereSafety() {
+    private boolean isHereSafety() throws IOException {
         if (here >= size) {
             return updateBuffer();
         }

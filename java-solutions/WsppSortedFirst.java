@@ -38,8 +38,8 @@ public final class WsppSortedFirst {
                     list.append(wordNumber);
                 }
             }
-        } catch (FileNotFoundException e) {
-            System.err.println("Input file not found: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
             return;
         }
 

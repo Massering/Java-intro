@@ -20,8 +20,8 @@ public final class WordStatInput {
                     addWord(word, words, arrayWords);
                 }
             }
-        } catch (FileNotFoundException e) {
-            System.err.println("Input file not found: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
             return;
         }
         
