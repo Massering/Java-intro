@@ -67,6 +67,7 @@ public class Scanner implements AutoCloseable {
                 if (!isHereSafety()) {
                     break;
                 }
+                // :NOTE: Hardcoded line separators
                 if (builder.charAt(0) == '\r' && buffer[here] == '\n') {
                     builder.append(buffer[here]);
                     here++;

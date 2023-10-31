@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 public class ReverseSumHexAbc {
     public static void main(String[] args) {
+        // :NOTE: ArrayList in decl
         ArrayList<IntList> list = new ArrayList<>();
         int maxLength = 0;
 
@@ -25,6 +26,7 @@ public class ReverseSumHexAbc {
                 list.add(ints);
             }
         } catch (IOException e) {
+            // :NOTE: no context
             System.err.println(e.getMessage());
             return;
         }
