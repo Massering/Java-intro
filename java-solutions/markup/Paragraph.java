@@ -2,7 +2,7 @@ package markup;
 
 import java.util.List;
 
-public class Paragraph implements Markdown, BBCode {
+public class Paragraph implements AbstractList, Markdown, BBCode {
     List<HighlightedText> objects;
     public Paragraph(List<HighlightedText> objects) {
         this.objects = objects;
