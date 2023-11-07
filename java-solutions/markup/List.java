@@ -1,6 +1,6 @@
 package markup;
 
-public abstract class List extends AbstractList {
+public abstract class List implements BBCode {
     java.util.List<ListItem> objects;
 
     public List(java.util.List<ListItem> objects) {
