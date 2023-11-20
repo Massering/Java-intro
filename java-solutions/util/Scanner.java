@@ -1,3 +1,5 @@
+package util;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
@@ -10,6 +12,10 @@ public class Scanner implements AutoCloseable {
     private final int HAS_NEXT_LINE = 2;
     private final int HAS_NEXT_WORD = 3;
     private final int OTHER = 100;
+
+    public static int NOT_SPACE = 0;
+    public static int WORD = 1;
+    public int isNextFunction = NOT_SPACE;
 
     private final int BUFFER_LENGTH = 1 << 13;
     private final char[] buffer = new char[BUFFER_LENGTH];
@@ -30,13 +36,18 @@ public class Scanner implements AutoCloseable {
         }
     }
 
+    public void setIsNextFunction(int param) {
+        isNextFunction = param;
+    }
+
     public boolean hasNext() throws IOException {
         if (lastCall == HAS_NEXT) {
             return true;
         }
 
         while (isHereSafety()) {
-            if (!isSpace(buffer[here])) {
+            if (isNextFunction == NOT_SPACE && !isSpace(buffer[here]) ||
+                    isNextFunction == WORD && isPartOfWord(buffer[here])) {
                 lastCall = HAS_NEXT;
                 return true;
             }
@@ -54,7 +65,8 @@ public class Scanner implements AutoCloseable {
         StringBuilder builder = new StringBuilder();
         while (isHereSafety()) {
             char c = buffer[here];
-            if (isSpace(c)) {
+            if (isNextFunction == NOT_SPACE && isSpace(buffer[here]) ||
+                    isNextFunction == WORD && !isPartOfWord(buffer[here])) {
                 break;
             }
 
@@ -67,8 +79,7 @@ public class Scanner implements AutoCloseable {
                 if (!isHereSafety()) {
                     break;
                 }
-                // :NOTE: Hardcoded line separators
-                if (builder.charAt(0) == '\r' && buffer[here] == '\n') {
+                if (builder.charAt(0) != buffer[here] && isLineSeparator(buffer[here])) {
                     builder.append(buffer[here]);
                     here++;
                 }
@@ -139,61 +150,12 @@ public class Scanner implements AutoCloseable {
         return false;
     }
 
-    public boolean hasNextWord() throws IOException {
-        if (lastCall == HAS_NEXT_WORD) {
-            return true;
-        }
-        while (isHereSafety()) {
-            if (isPartOfWord(buffer[here]) || isLineSeparator(buffer[here])) {
-                lastCall = HAS_NEXT_WORD;
-                return true;
-            }
-            here++;
-        }
-        return false;
-    }
-
-    public String nextWord() throws IOException {
-        if (!hasNextWord()) {
-            throw new NoSuchElementException();
-        }
-        lastCall = OTHER;
-
-        StringBuilder builder = new StringBuilder();
-        while (isHereSafety()) {
-            char c = buffer[here];
-            boolean isSep = isLineSeparator(c);
-            if (!isPartOfWord(c) && !isSep) {
-                break;
-            }
-
-            if (isSep) {
-                if (builder.isEmpty()) {
-                    builder.append(c);
-                    c = buffer[++here];
-                    if (!isHereSafety()) {
-                        break;
-                    }
-                    if (builder.charAt(0) == '\r' && c == '\n') {
-                        builder.append(c);
-                        here++;
-                    }
-                }
-                break;
-            }
-
-            builder.append(buffer[here]);
-            here++;
-        }
-        return builder.toString();
-    }
-
     public boolean isPartOfWord(char c) {
         int typeC = Character.getType(c);
         return typeC == Character.LOWERCASE_LETTER ||
                 typeC == Character.UPPERCASE_LETTER ||
                 typeC == Character.DASH_PUNCTUATION ||
-                c == '\'';
+                c == '\'' || isLineSeparator(c);
     }
 
     private boolean updateBuffer() throws IOException {

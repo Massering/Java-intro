@@ -1,17 +1,32 @@
+package util;
+
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class IntList {
     private int[] data;
-    private int size;
+    private int size = 0;
 
     public IntList() {
         data = new int[1];
-        size = 0;
     }
 
     public IntList(int capacity) {
         data = new int[capacity];
-        size = 0;
+    }
+
+    public IntList(int[] arr) {
+        data = new int[arr.length];
+        for (int i : arr) {
+            this.append(i);
+        }
+    }
+
+    public IntList(List<Integer> list) {
+        data = new int[list.size()];
+        for (int i : list) {
+            this.append(i);
+        }
     }
 
     public void append(int value) {
@@ -19,6 +34,20 @@ public class IntList {
             this.extract();
         }
         data[size++] = value;
+    }
+
+    public void fill(int capacity, int value) {
+        this.clear();
+        this.setLength(capacity);
+        for (; capacity > 0; capacity--) {
+            this.append(value);
+        }
+    }
+
+    public void clear() {
+        while (this.size() > 0) {
+            this.pop();
+        }
     }
 
     public void pop() {

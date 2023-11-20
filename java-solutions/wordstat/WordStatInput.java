@@ -1,40 +1,40 @@
+package wordstat;
+
+import util.Scanner;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
-public final class Wspp {
+public final class WordStatInput {
     public static void main(final String[] args) {
         if (args.length < 2) {
             System.out.println("Specify input and output filenames as command-line arguments");
             return;
         }
 
-        HashMap<String, IntList> words = new HashMap<>();
+        Map<String, Integer> words = new HashMap<>();
         ArrayList<String> arrayWords = new ArrayList<>();
-        int wordNumber = 0;
 
         try (Scanner myScanner = new Scanner(new FileInputStream(args[0]))) {
+            myScanner.setIsNextFunction(Scanner.WORD);
             String word;
-            while (myScanner.hasNextWord()) {
-                word = myScanner.nextWord();
+            while (myScanner.hasNext()) {
+                word = myScanner.next().toLowerCase();
                 if (!Scanner.isLineSeparator(word)) {
-                    wordNumber = addWord(word.toLowerCase(), words, arrayWords, wordNumber);
+                    addWord(word, words, arrayWords);
                 }
             }
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error while reading input file: " + e.getMessage());
             return;
         }
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(args[1],
-                StandardCharsets.UTF_8))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(args[1], StandardCharsets.UTF_8))) {
             for (String string : arrayWords) {
                 writer.write(string);
                 writer.write(" ");
-                writer.write(Integer.toString(words.get(string).length()));
-                writer.write(" ");
-                writer.write(words.get(string).toString());
+                writer.write(Integer.toString(words.get(string)));
                 writer.newLine();
             }
         } catch (FileNotFoundException e) {
@@ -44,15 +44,11 @@ public final class Wspp {
         }
     }
 
-    public static int addWord(String word, HashMap<String, IntList> words, ArrayList<String> arrayWords, int wordNumber) {
-        IntList list = words.get(word);
-        if (list == null) {
+    public static void addWord(String word, Map<String, Integer> words, ArrayList<String> arrayWords) {
+        int value = words.getOrDefault(word, 0);
+        if (value == 0) {
             arrayWords.add(word);
-            list = new IntList();
-            words.put(word, list);
         }
-        wordNumber++;
-        list.append(wordNumber);
-        return wordNumber;
+        words.put(word, value + 1);
     }
 }

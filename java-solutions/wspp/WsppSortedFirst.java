@@ -1,3 +1,8 @@
+package wspp;
+
+import util.Scanner;
+import util.IntList;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -12,10 +17,11 @@ public final class WsppSortedFirst {
         Map<String, IntList> words = new TreeMap<>();
         int wordNumber = 0;
 
-        try (Scanner scanner = new Scanner(new FileInputStream(args[0]))) {
+        try (Scanner myScanner = new Scanner(new FileInputStream(args[0]))) {
+            myScanner.setIsNextFunction(Scanner.WORD);
             Set<String> set = new HashSet<>();
-            while (scanner.hasNextWord()) {
-                String word = scanner.nextWord();
+            while (myScanner.hasNext()) {
+                String word = myScanner.next();
 
                 if (Scanner.isLineSeparator(word)) {
                     set = new HashSet<>();
@@ -39,7 +45,7 @@ public final class WsppSortedFirst {
                 }
             }
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error while reading input file: " + e.getMessage());
             return;
         }
 

@@ -1,3 +1,8 @@
+package reverse;
+
+import util.Scanner;
+import util.IntList;
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -22,7 +27,7 @@ public class Reverse {
                 list.add(ints);
             }
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error while reading input file: " + e.getMessage());
         }
 
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out))) {

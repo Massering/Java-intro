@@ -1,3 +1,5 @@
+package sum;
+
 public final class SumLongSpace {
     public static void main(final String[] args) {
         long sum = 0;
