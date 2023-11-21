@@ -46,6 +46,7 @@ public class Md2Html {
                     }
                     if (level > 0 && line.charAt(level) == ' ') {
                         paraSB.append(line.substring(level + 1));
+                        // :NOTE: h > 0
                         if (level == 1 && h > 0) {
                             level = h;
                         } else {
@@ -80,12 +81,13 @@ public class Md2Html {
         }
     }
 
+    // :NOTE: ParagraphTag
     static void replaceAndAddParagraph(String oldParagraph, StringBuilder builder, CharSequence ParagraphTag) {
         builder.append(openTag(ParagraphTag.toString()));
-        Map<String, Integer> opened = new HashMap<>();
-        boolean stop = false;
+        final Map<String, Integer> opened = new HashMap<>();
         boolean slash = false;
         for (int i = 0; i < oldParagraph.length(); i++) {
+            boolean found = false;
             if (!slash) {
                 for (String[] pat : MdToHtmlMap) {
                     String oldPat = pat[0];
@@ -97,9 +99,8 @@ public class Md2Html {
                             builder.replace(ind, ind + oldPat.length(), openTag(newPat));
                             builder.append(closeTag(newPat));
                             opened.remove(oldPat);
-                        }
-
-                        else {
+                            // :NOTE: formatting
+                        } else {
                             if (oldPat.equals(PRE_MD)) {
                                 int endInd = oldParagraph.indexOf(PRE_MD, i + 1);
                                 builder.append(openTag(newPat));
@@ -107,20 +108,20 @@ public class Md2Html {
                                     builder.append(oldParagraph.substring(i + 3, endInd)).append(closeTag(newPat));
                                     i = endInd;
                                 }
-                            }
-                            else {
+                            } else {
                                 opened.put(oldPat, builder.length() - 1);
                                 builder.append(oldPat);
                             }
                         }
                         i += oldPat.length() - 1;
-                        stop = true;
+                        found = true;
                         break;
                     }
                 }
             }
             slash = oldParagraph.charAt(i) == '\\';
-            if (!stop && !slash) {
+            if (!found && !slash) {
+                // :NOTE: Map
                 if (oldParagraph.charAt(i) == '<') {
                     builder.append("&lt;");
                 } else if (oldParagraph.charAt(i) == '>') {
@@ -131,7 +132,6 @@ public class Md2Html {
                     builder.append(oldParagraph.charAt(i));
                 }
             }
-            stop = false;
         }
         builder.append(closeTag(ParagraphTag.toString()));
     }
