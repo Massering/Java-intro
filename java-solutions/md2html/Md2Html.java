@@ -40,6 +40,7 @@ public class Md2Html {
                     }
                 } else if (paraSB.isEmpty()) {
                     int level = 0;
+                    int h = 0;
                     while (line.charAt(level) == '#') {
                         level++;
                     }
