@@ -8,6 +8,9 @@ import java.util.*;
 
 public class Md2Html {
     static String PRE_MD = "```";
+
+    // :NOTE: new class
+    // :NOTE: -> final
     static String[][] MdToHtmlMap = {
             {"--", "s"},
             {"**", "strong"},
@@ -20,7 +23,7 @@ public class Md2Html {
 
     public static void main(String[] args) {
         StringBuilder builder = new StringBuilder();
-        try(Scanner scanner = new Scanner(new FileInputStream(args[0]))) {
+        try (Scanner scanner = new Scanner(new FileInputStream(args[0]))) {
             String line;
             int h = 0;
             StringBuilder paraSB = new StringBuilder();
@@ -33,41 +36,34 @@ public class Md2Html {
                     if (!paraSB.isEmpty()) {
                         replaceAndAddParagraph(paraSB.toString(), builder, paraTag);
                         paraSB.setLength(0);
-                        paraTag = "";
                         builder.append(System.lineSeparator());
-                        h = 0;
                     }
-                }
-
-                else {
-                    if (paraSB.isEmpty()) {
-                        int level = 0;
-                        while (line.charAt(level) == '#') {
-                            level++;
-                        }
-                        if (level > 0 && line.charAt(level) == ' ') {
-                            paraSB.append(line.substring(level + 1));
-                            if (level == 1 && h > 0) {
-                                level = h;
-                            } else {
-                                h = level;
-                            }
-                            paraTag = "h" + level;
+                } else if (paraSB.isEmpty()) {
+                    int level = 0;
+                    while (line.charAt(level) == '#') {
+                        level++;
+                    }
+                    if (level > 0 && line.charAt(level) == ' ') {
+                        paraSB.append(line.substring(level + 1));
+                        if (level == 1 && h > 0) {
+                            level = h;
                         } else {
-                            paraTag = "p";
-                            paraSB.append(line);
+                            h = level;
                         }
+                        paraTag = "h" + level;
                     } else {
-                        paraSB.append("\n").append(line);
+                        paraTag = "p";
+                        paraSB.append(line);
                     }
+                } else {
+                    paraSB.append("\n").append(line);
                 }
             }
 
             if (!paraSB.isEmpty()) {
                 replaceAndAddParagraph(paraSB.toString(), builder, paraTag);
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             System.err.println("File not found: " + e.getMessage());
         } catch (IOException e) {
             System.err.println("Input error: " + e.getMessage());
