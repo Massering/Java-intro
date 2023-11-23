@@ -1,4 +1,4 @@
-package Game;
+package game;
 
 public class Game {
     private final boolean log;

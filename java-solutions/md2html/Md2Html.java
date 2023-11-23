@@ -1,6 +1,7 @@
 package md2html;
 
 import util.Scanner;
+import util.PairOfStrings;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -9,62 +10,49 @@ import java.util.*;
 public class Md2Html {
     static String PRE_MD = "```";
 
-    // :NOTE: new class
-    // :NOTE: -> final
-    static String[][] MdToHtmlMap = {
-            {"--", "s"},
-            {"**", "strong"},
-            {"__", "strong"},
-            {"*", "em"},
-            {"_", "em"},
-            {PRE_MD, "pre"},
-            {"`", "code"}
+    static final PairOfStrings[] MarkToTagMap = new PairOfStrings[]{
+            new PairOfStrings("--", "s"),
+            new PairOfStrings("**", "strong"),
+            new PairOfStrings("__", "strong"),
+            new PairOfStrings("*", "em"),
+            new PairOfStrings("_", "em"),
+            new PairOfStrings(PRE_MD, "pre"),
+            new PairOfStrings("`", "code")
     };
+
+    static final Map<Character, String> htmlEscapeMap = new HashMap<>() {{
+        put('<', "&lt;");
+        put('>', "&gt;");
+        put('&', "&amp;");
+    }};
 
     public static void main(String[] args) {
         StringBuilder builder = new StringBuilder();
         try (Scanner scanner = new Scanner(new FileInputStream(args[0]))) {
             String line;
-            int h = 0;
             StringBuilder paraSB = new StringBuilder();
-            String paraTag = "";
 
             while (scanner.hasNextLine()) {
                 line = scanner.nextLine();
+                System.out.println(line);
 
                 if (line.isEmpty()) {
                     if (!paraSB.isEmpty()) {
-                        replaceAndAddParagraph(paraSB.toString(), builder, paraTag);
+                        replaceAndAddParagraph(paraSB.toString(), builder);
                         paraSB.setLength(0);
                         builder.append(System.lineSeparator());
                     }
-                } else if (paraSB.isEmpty()) {
-                    int level = 0;
-                    h = 0;
-                    while (line.charAt(level) == '#') {
-                        level++;
-                    }
-                    if (level > 0 && line.charAt(level) == ' ') {
-                        paraSB.append(line.substring(level + 1));
-                        // :NOTE: h > 0
-                        if (level == 1 && h > 0) {
-                            level = h;
-                        } else {
-                            h = level;
-                        }
-                        paraTag = "h" + level;
-                    } else {
-                        paraTag = "p";
-                        paraSB.append(line);
-                    }
                 } else {
-                    paraSB.append("\n").append(line);
+                    if (!paraSB.isEmpty()) {
+                        paraSB.append(System.lineSeparator());
+                    }
+                    paraSB.append(line);
                 }
             }
-
             if (!paraSB.isEmpty()) {
-                replaceAndAddParagraph(paraSB.toString(), builder, paraTag);
+                replaceAndAddParagraph(paraSB.toString(), builder);
             }
+
         } catch (FileNotFoundException e) {
             System.err.println("File not found: " + e.getMessage());
         } catch (IOException e) {
@@ -73,25 +61,36 @@ public class Md2Html {
 
         try (Writer writer = new BufferedWriter(new FileWriter(args[1], StandardCharsets.UTF_8))) {
             writer.write(builder.toString());
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             System.err.println("File not found: " + e.getMessage());
         } catch (IOException e) {
             System.err.println("Output error: " + e.getMessage());
         }
     }
 
-    // :NOTE: ParagraphTag
-    static void replaceAndAddParagraph(String oldParagraph, StringBuilder builder, CharSequence ParagraphTag) {
-        builder.append(openTag(ParagraphTag.toString()));
+    static void replaceAndAddParagraph(String oldParagraph, StringBuilder builder) {
+        int level = 0;
+        while (oldParagraph.charAt(level) == '#') {
+            level++;
+        }
+        String paragraphTag;
+        if (level > 0 && oldParagraph.charAt(level) == ' ') {
+            paragraphTag = "h" + level;
+            level += 1;
+        } else {
+            paragraphTag = "p";
+            level = 0;
+        }
+        builder.append(openTag(paragraphTag));
+
         final Map<String, Integer> opened = new HashMap<>();
         boolean slash = false;
-        for (int i = 0; i < oldParagraph.length(); i++) {
+        for (int i = level; i < oldParagraph.length(); i++) {
             boolean found = false;
             if (!slash) {
-                for (String[] pat : MdToHtmlMap) {
-                    String oldPat = pat[0];
-                    String newPat = pat[1];
+                for (var pat : MarkToTagMap) {
+                    String oldPat = pat.first;
+                    String newPat = pat.second;
 
                     if (oldParagraph.startsWith(oldPat, i)) {
                         if (opened.containsKey(oldPat)) {
@@ -99,7 +98,6 @@ public class Md2Html {
                             builder.replace(ind, ind + oldPat.length(), openTag(newPat));
                             builder.append(closeTag(newPat));
                             opened.remove(oldPat);
-                            // :NOTE: formatting
                         } else {
                             if (oldPat.equals(PRE_MD)) {
                                 int endInd = oldParagraph.indexOf(PRE_MD, i + 1);
@@ -121,19 +119,11 @@ public class Md2Html {
             }
             slash = oldParagraph.charAt(i) == '\\';
             if (!found && !slash) {
-                // :NOTE: Map
-                if (oldParagraph.charAt(i) == '<') {
-                    builder.append("&lt;");
-                } else if (oldParagraph.charAt(i) == '>') {
-                    builder.append("&gt;");
-                } else if (oldParagraph.charAt(i) == '&') {
-                    builder.append("&amp;");
-                } else {
-                    builder.append(oldParagraph.charAt(i));
-                }
+                char c = oldParagraph.charAt(i);
+                builder.append(htmlEscapeMap.getOrDefault(c, String.valueOf(c)));
             }
         }
-        builder.append(closeTag(ParagraphTag.toString()));
+        builder.append(closeTag(paragraphTag));
     }
 
     static String openTag(String tag) {

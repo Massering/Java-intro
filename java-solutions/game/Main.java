@@ -1,11 +1,11 @@
-package Game;
+package game;
 
 import util.IntList;
 
 import java.util.List;
 import java.util.Scanner;
 
-import static Game.Util.getInts;
+import static game.Util.getInts;
 
 public class Main {
 
