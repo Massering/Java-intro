@@ -7,18 +7,21 @@ import java.util.List;
 import java.util.Scanner;
 
 import static game.Util.getInts;
+import static game.Util.getString;
 
 public class HumanPlayer implements Player {
     private final PrintStream out;
     private final Scanner in;
+    private final String name;
 
-    public HumanPlayer(final PrintStream out, final Scanner in) {
+    public HumanPlayer(final PrintStream out, final Scanner in, String name) {
         this.out = out;
         this.in = in;
+        this.name = name;
     }
 
-    public HumanPlayer() {
-        this(System.out, new Scanner(System.in));
+    public HumanPlayer(String name) {
+        this(System.out, new Scanner(System.in), name);
     }
 
     @Override
@@ -27,7 +30,6 @@ public class HumanPlayer implements Player {
             out.println("Position:");
             out.println(position);
             out.println(cell + "'s move");
-            out.println("Enter row and column");
 
             IntList arr = getInts(in, 2, List.of("row number (i)", "column number (j)"),
                     new IntList(new int[]{1, 1}), new IntList(List.of(position.getNumRows(), position.getNumCols())));
@@ -42,5 +44,10 @@ public class HumanPlayer implements Player {
             out.println();
             out.println("Wrong move. Selected cell wasn't empty. Try again:");
         }
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

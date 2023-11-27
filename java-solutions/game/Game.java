@@ -11,6 +11,7 @@ public class Game {
     }
 
     public int play(Board board) {
+        log(player1.getName() + " vs " + player2.getName());
         while (true) {
             final int result1 = move(board, player1, 1);
             if (result1 != -1) {
@@ -26,23 +27,25 @@ public class Game {
 
     private int move(final Board board, final Player player, final int no) {
         Result result;
-        try {
-            Move move = player.move(board.getPosition(), board.getTurn());
-            result = board.makeMove(move);
-            log("Player " + no + " move: " + move);
-        } catch (Exception e) {
-            result = Result.LOSE;
-            log("Player " + no + " moves invalid move. He's losing.");
-        }
+        do {
+            try {
+                Move move = player.move(board.getPosition(), board.getTurn());
+                result = board.makeMove(move);
+                log(player.getName() + " moves: " + move);
+            } catch (Exception e) {
+                result = Result.LOSE;
+                log(player.getName() + " throw exception while moving. He's losing.");
+            }
+        } while (result == Result.EXTRA_MOVE);
         log("Position:\n" + board);
 
         switch (result) {
             case WIN: {
-                log("Player " + no + " won");
+                log(player.getName() + " won");
                 return no;
             }
             case LOSE: {
-                log("Player " + no + " lose");
+                log(player.getName() + " lose");
                 return 3 - no;
             }
             case DRAW: {

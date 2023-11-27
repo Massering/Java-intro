@@ -1,13 +1,13 @@
 package game;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 
 public class TicTacToeBoard implements Board {
-    private static final Map<Cell, Character> SYMBOLS = Map.of(
-            Cell.X, 'X',
-            Cell.O, 'O',
-            Cell.E, '.'
+    private static final Map<Cell, String> SYMBOLS = Map.of(
+            Cell.X, " X ",
+            Cell.O, " O ",
+            Cell.E, " . ",
+            Cell.D, "   "
     );
 
     private final int n;
@@ -20,11 +20,29 @@ public class TicTacToeBoard implements Board {
     public TicTacToeBoard(int n, int m, int k) {
         this.n = n;
         this.m = m;
-        empty = n * m;
         this.k = k;
+        empty = n * m;
         cells = new Cell[n][m];
         for (Cell[] row : cells) {
             Arrays.fill(row, Cell.E);
+        }
+        turn = Cell.X;
+    }
+
+    public TicTacToeBoard(int d, int k) {
+        n = d;
+        m = d;
+        this.k = k;
+        empty = 0;
+        cells = new Cell[d][d];
+        for (int i = 0; i < d; i++) {
+            for (int j = 0; j < d; j++) {
+                cells[i][j] = Cell.D;
+                if (isInCircle(i, j)) {
+                    cells[i][j] = Cell.E;
+                    empty++;
+                }
+            }
         }
         turn = Cell.X;
     }
@@ -38,33 +56,106 @@ public class TicTacToeBoard implements Board {
         int j = move.getCol();
         cells[i][j] = move.getCell();
         empty -= 1;
+        boolean extraMove = false;
 
-        int countHorisontal = 0, countVertical = 0, countDiagonal1 = 0, countDiagonal2 = 0;
-        for (int offset = -k + 1; offset < k; offset++) {
-            if (isValidCell(i + offset, j)) {
-                countHorisontal = turn == cells[i + offset][j] ? countHorisontal + 1 : 0;
-            }
-            if (isValidCell(i, j + offset)) {
-                countVertical = turn == cells[i][j + offset] ? countVertical + 1 : 0;
-            }
-            if (isValidCell(i + offset, j + offset)) {
-                countDiagonal1 = turn == cells[i + offset][j + offset] ? countDiagonal1 + 1 : 0;
-            }
-            if (isValidCell(i - offset, j + offset)) {
-                countDiagonal2 = turn == cells[i - offset][j + offset] ? countDiagonal2 + 1 : 0;
-            }
+        int[][] counters = getSeqLengths(i, j);
 
-            if (Math.max(Math.max(countHorisontal, countVertical), Math.max(countDiagonal1, countDiagonal2)) == k) {
-                return Result.WIN;
+        for (int dirI = -1; dirI < 1; dirI++) {
+            for (int dirJ = -1; dirJ < 2; dirJ++) {
+                // Выбираем только верхние и правую клетки, чтобы не проходить дважды
+                if (dirI < dirJ || dirI == -1) {
+                    int firstSeq = counters[dirI + 1][dirJ + 1];
+                    int secondSeq = counters[-dirI + 1][-dirJ + 1];
+
+                    if (firstSeq < 4 && secondSeq < 4 && firstSeq + secondSeq + 1 >= 4) {
+                        extraMove = true;
+                    }
+                    if (firstSeq + secondSeq + 1 >= k) {
+                        return Result.WIN;
+                    }
+                }
             }
         }
-
-        turn = turn == Cell.X ? Cell.O : Cell.X;
 
         if (empty == 0) {
             return Result.DRAW;
         }
+
+        if (extraMove) {
+            return Result.EXTRA_MOVE;
+        }
+        turn = turn == Cell.X ? Cell.O : Cell.X;
         return Result.UNKNOWN;
+    }
+
+    private int[][] getSeqLengths(int i, int j) {
+        int[][] counters = new int[3][3];
+        for (int dirI = -1; dirI < 2; dirI++) {
+            for (int dirJ = -1; dirJ < 2; dirJ++) {
+                if (dirI != dirJ || dirI != 0) {
+                    counters[dirI + 1][dirJ + 1] = getSeqLength(i, j, dirI, dirJ);
+                }
+            }
+        }
+        return counters;
+    }
+
+    private int getSeqLength(int i, int j, int dirI, int dirJ) {
+        int count = 1;
+        while (isPartOfSequence(i + count * dirI, j + count * dirJ)) {
+            count++;
+        }
+        return count - 1;
+    }
+
+    private boolean isPartOfSequence(int i, int j) {
+        return isValidCell(i, j) && getCell(i, j) == getTurn();
+    }
+
+    private boolean isInCircle(int i, int j) {
+        float centerI = (float) (n - 1) / 2;
+        float centerJ = (float) (m - 1) / 2;
+        return (centerI - i) * (centerI - i) + (centerJ - j) * (centerJ - j) < (float) (n - 1) * n / 4;
+    }
+
+    private boolean isValidCell(int i, int j) {
+        return 0 <= i && i < n && 0 <= j && j < m && cells[i][j] != Cell.D;
+    }
+
+    public boolean isValid(Move move) {
+        return
+                isValidCell(move.getRow(), move.getCol()) &&
+                        cells[move.getRow()][move.getCol()] == Cell.E &&
+                        move.getCell() == turn;
+    }
+
+    @Override
+    public void clear() {
+        empty = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (cells[i][j] != Cell.D) {
+                    cells[i][j] = Cell.E;
+                    empty++;
+                }
+            }
+        }
+        turn = Cell.X;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(empty).append("\n");
+        for (int r = 0; r < n; r++) {
+            if (r != 0) {
+                sb.append("\n");
+            }
+            for (int c = 0; c < m; c++) {
+                sb.append(SYMBOLS.get(cells[r][c]));
+            }
+        }
+        return sb.toString();
     }
 
     @Override
@@ -95,30 +186,5 @@ public class TicTacToeBoard implements Board {
     @Override
     public int getK() {
         return k;
-    }
-
-    private boolean isValidCell(int i, int j) {
-        return 0 <= i && i < n && 0 <= j && j < m;
-    }
-
-    public boolean isValid(Move move) {
-        return
-                isValidCell(move.getRow(), move.getCol()) &&
-                cells[move.getRow()][move.getCol()] == Cell.E &&
-                move.getCell() == turn;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        for (int r = 0; r < n; r++) {
-            if (r != 0) {
-                sb.append("\n");
-            }
-            for (int c = 0; c < m; c++) {
-                sb.append(SYMBOLS.get(cells[r][c]));
-            }
-        }
-        return sb.toString();
     }
 }

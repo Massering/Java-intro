@@ -4,13 +4,15 @@ import java.util.Random;
 
 public class RandomPlayer implements Player {
     private final Random random;
+    private final String name;
 
-    public RandomPlayer(final Random random) {
+    public RandomPlayer(final Random random, String name) {
         this.random = random;
+        this.name = name;
     }
 
-    public RandomPlayer() {
-        this(new Random());
+    public RandomPlayer(String name) {
+        this(new Random(), name);
     }
 
     @Override
@@ -23,5 +25,10 @@ public class RandomPlayer implements Player {
                 return move;
             }
         }
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

@@ -1,6 +1,8 @@
 package game;
 
 public interface Board {
+    void clear();
+
     Position getPosition();
 
     Cell getCell(int r, int c);

@@ -1,6 +1,7 @@
 package game;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import util.IntList;
 
@@ -17,17 +18,35 @@ public abstract class Util {
         return getInts(scanner, numberOfInts, names, mins, maxs);
     }
 
+    static String getString(Scanner scanner, String whatToEnter) {
+        boolean error = false;
+        String line = null;
+        do {
+            System.out.println("Enter " + whatToEnter + ":");
+            try {
+                line = scanner.nextLine();
+                if (line.isEmpty()) {
+                    System.out.println("Please enter a non-empty string");
+                    error = true;
+                }
+            } catch (NoSuchElementException e) {
+                System.out.println("Please don't press Ctrl+D. It makes me cry");
+                error = true;
+            }
+        } while (error);
+
+        return line;
+    }
+
     static IntList getInts(Scanner scanner, int numberOfInts, List<String> names, IntList mins, IntList maxs) {
         boolean error;
         IntList ints;
 
         String joinedNames = String.join(", ", names);
-
         do {
-            System.out.println("Enter " + joinedNames + ":");
             error = false;
             ints = new IntList();
-            Scanner scanLine = new Scanner(scanner.nextLine());
+            Scanner scanLine = new Scanner(getString(scanner, joinedNames));
             for (int i = 0; i < numberOfInts; i++) {
                 Integer x = getInt(scanLine, mins.get(i), maxs.get(i));
                 if (x == null) {
@@ -78,5 +97,20 @@ public abstract class Util {
         }
 
         return x;
+    }
+
+    static double log2(int x) {
+        return Math.log(x) / Math.log(2);
+    }
+
+    static int binPow(int n, int power) {
+        if (power == 0) {
+            return 1;
+        }
+        if (power % 2 == 0) {
+            int x = binPow(n, power / 2);
+            return x * x;
+        }
+        return binPow(n, power - 1) * n;
     }
 }
