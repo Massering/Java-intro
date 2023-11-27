@@ -15,3 +15,4 @@ prog-intro.iml
 *.jar
 base*
 *Test*
+/java-solutions/expression/common/

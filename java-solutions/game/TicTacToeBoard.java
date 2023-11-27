@@ -113,9 +113,8 @@ public class TicTacToeBoard implements Board {
     }
 
     private boolean isInCircle(int i, int j) {
-        float centerI = (float) (n - 1) / 2;
-        float centerJ = (float) (m - 1) / 2;
-        return (centerI - i) * (centerI - i) + (centerJ - j) * (centerJ - j) < (float) (n - 1) * n / 4;
+        int center = (n - 1) / 2;
+        return (center - i) * (center - i) + (center - j) * (center - j) < (n - 1) * (n - 1) / 4;
     }
 
     private boolean isValidCell(int i, int j) {
@@ -146,7 +145,6 @@ public class TicTacToeBoard implements Board {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append(empty).append("\n");
         for (int r = 0; r < n; r++) {
             if (r != 0) {
                 sb.append("\n");

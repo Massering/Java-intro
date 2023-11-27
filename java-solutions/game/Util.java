@@ -3,6 +3,7 @@ package game;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+
 import util.IntList;
 
 public abstract class Util {
@@ -90,8 +91,7 @@ public abstract class Util {
         if (x < min) {
             System.out.println("Invalid number. The number is less than expected (" + x + " < " + min + ")");
             return null;
-        }
-        else if (x > max) {
+        } else if (x > max) {
             System.out.println("Invalid number. The number is larger than expected (" + x + " > " + max + ")");
             return null;
         }
