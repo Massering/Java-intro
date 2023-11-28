@@ -20,9 +20,10 @@ public abstract class Util {
     }
 
     static String getString(Scanner scanner, String whatToEnter) {
-        boolean error = false;
+        boolean error;
         String line = null;
         do {
+            error = false;
             System.out.println("Enter " + whatToEnter + ":");
             try {
                 line = scanner.nextLine();

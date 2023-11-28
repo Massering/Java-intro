@@ -1,12 +1,10 @@
-package wordstat;
-
 import util.Scanner;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public final class WordStatCountMiddleL {
+public final class WordStatInput {
     public static void main(final String[] args) {
         if (args.length < 2) {
             System.out.println("Specify input and output filenames as command-line arguments");
@@ -14,32 +12,23 @@ public final class WordStatCountMiddleL {
         }
 
         Map<String, Integer> words = new HashMap<>();
-        List<String> arrayWords = new ArrayList<>();
+        ArrayList<String> arrayWords = new ArrayList<>();
 
         try (Scanner myScanner = new Scanner(new FileInputStream(args[0]))) {
             myScanner.setIsNextFunction(Scanner.WORD);
             String word;
             while (myScanner.hasNext()) {
                 word = myScanner.next().toLowerCase();
-                addWord(word, words, arrayWords);
+                if (!Scanner.isLineSeparator(word)) {
+                    addWord(word, words, arrayWords);
+                }
             }
-        } catch (FileNotFoundException e) {
-            System.err.println("Input file not found: " + e.getMessage());
-            return;
         } catch (IOException e) {
             System.err.println("Error while reading input file: " + e.getMessage());
             return;
         }
 
-        arrayWords.sort(new Comparator<>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return words.get(o1) - words.get(o2);
-            }
-        });
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(args[1],
-                StandardCharsets.UTF_8))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(args[1], StandardCharsets.UTF_8))) {
             for (String string : arrayWords) {
                 writer.write(string);
                 writer.write(" ");
@@ -53,11 +42,7 @@ public final class WordStatCountMiddleL {
         }
     }
 
-    public static void addWord(String word, Map<String, Integer> words, List<String> arrayWords) {
-        if (word.length() < 5) {
-            return;
-        }
-        word = word.substring(2, word.length() - 2);
+    public static void addWord(String word, Map<String, Integer> words, ArrayList<String> arrayWords) {
         int value = words.getOrDefault(word, 0);
         if (value == 0) {
             arrayWords.add(word);

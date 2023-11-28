@@ -1,5 +1,3 @@
-package reverse;
-
 import util.Scanner;
 import util.IntList;
 

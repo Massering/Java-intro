@@ -1,5 +1,3 @@
-package wspp;
-
 import util.Scanner;
 import util.IntList;
 

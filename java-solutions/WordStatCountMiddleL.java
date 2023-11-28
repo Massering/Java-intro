@@ -1,46 +1,47 @@
-package wspp;
-
 import util.Scanner;
-import util.IntList;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
-public final class Wspp {
+public final class WordStatCountMiddleL {
     public static void main(final String[] args) {
         if (args.length < 2) {
             System.out.println("Specify input and output filenames as command-line arguments");
             return;
         }
 
-        HashMap<String, IntList> words = new HashMap<>();
-        ArrayList<String> arrayWords = new ArrayList<>();
-        int wordNumber = 0;
+        Map<String, Integer> words = new HashMap<>();
+        List<String> arrayWords = new ArrayList<>();
 
         try (Scanner myScanner = new Scanner(new FileInputStream(args[0]))) {
             myScanner.setIsNextFunction(Scanner.WORD);
             String word;
             while (myScanner.hasNext()) {
-                word = myScanner.next();
-                if (!Scanner.isLineSeparator(word)) {
-                    wordNumber = addWord(word.toLowerCase(), words, arrayWords, wordNumber);
-                }
+                word = myScanner.next().toLowerCase();
+                addWord(word, words, arrayWords);
             }
+        } catch (FileNotFoundException e) {
+            System.err.println("Input file not found: " + e.getMessage());
+            return;
         } catch (IOException e) {
             System.err.println("Error while reading input file: " + e.getMessage());
             return;
         }
+
+        arrayWords.sort(new Comparator<>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return words.get(o1) - words.get(o2);
+            }
+        });
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(args[1],
                 StandardCharsets.UTF_8))) {
             for (String string : arrayWords) {
                 writer.write(string);
                 writer.write(" ");
-                writer.write(Integer.toString(words.get(string).length()));
-                writer.write(" ");
-                writer.write(words.get(string).toString());
+                writer.write(Integer.toString(words.get(string)));
                 writer.newLine();
             }
         } catch (FileNotFoundException e) {
@@ -50,15 +51,15 @@ public final class Wspp {
         }
     }
 
-    public static int addWord(String word, HashMap<String, IntList> words, ArrayList<String> arrayWords, int wordNumber) {
-        IntList list = words.get(word);
-        if (list == null) {
-            arrayWords.add(word);
-            list = new IntList();
-            words.put(word, list);
+    public static void addWord(String word, Map<String, Integer> words, List<String> arrayWords) {
+        if (word.length() < 5) {
+            return;
         }
-        wordNumber++;
-        list.append(wordNumber);
-        return wordNumber;
+        word = word.substring(2, word.length() - 2);
+        int value = words.getOrDefault(word, 0);
+        if (value == 0) {
+            arrayWords.add(word);
+        }
+        words.put(word, value + 1);
     }
 }
