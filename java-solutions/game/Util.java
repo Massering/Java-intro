@@ -76,11 +76,11 @@ public abstract class Util {
         }
         if (x < min) {
             System.out.println("The number `" + input +
-                    "` is less than expected (" + x + " < " + min + ") <(￣︶￣)↗");
+                    "` is less than expected (" + x + " < " + min + ") <(￣︶￣)↑");
             return null;
         } else if (x > max) {
             System.out.println("The number `" + input +
-                    "` is larger than expected (" + x + " > " + max + ") <(￣︶￣)↘");
+                    "` is larger than expected (" + x + " > " + max + ") <(￣︶￣)↓");
             return null;
         }
 
