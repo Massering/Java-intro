@@ -19,27 +19,6 @@ public abstract class Util {
         return getInts(scanner, numberOfInts, names, mins, maxs);
     }
 
-    static String getString(Scanner scanner, String whatToEnter) {
-        boolean error;
-        String line = null;
-        do {
-            error = false;
-            System.out.println("Enter " + whatToEnter + ":");
-            try {
-                line = scanner.nextLine();
-                if (line.isEmpty()) {
-                    System.out.println("Please enter a non-empty string");
-                    error = true;
-                }
-            } catch (NoSuchElementException e) {
-                System.out.println("Please don't press Ctrl+D. It makes me cry");
-                error = true;
-            }
-        } while (error);
-
-        return line;
-    }
-
     static IntList getInts(Scanner scanner, int numberOfInts, List<String> names, IntList mins, IntList maxs) {
         boolean error;
         IntList ints;
@@ -52,15 +31,15 @@ public abstract class Util {
             for (int i = 0; i < numberOfInts; i++) {
                 Integer x = getInt(scanLine, mins.get(i), maxs.get(i));
                 if (x == null) {
-                    System.out.print("Try again. ");
+                    System.out.print("Try again. (◍•ᴗ•◍)✧*。");
                     error = true;
                     break;
                 }
                 ints.append(x);
             }
             if (!error && scanLine.hasNext()) {
-                System.out.println("Too many input numbers.");
-                System.out.print("Try again. ");
+                System.out.println("Too many input numbers. (●´⌓`●)");
+                System.out.print("Try again. (◍•ᴗ•◍)✧*。");
                 error = true;
             }
         } while (error);
@@ -76,28 +55,53 @@ public abstract class Util {
         String input;
 
         if (!scanner.hasNext()) {
-            System.out.println("Too few input numbers.");
+            System.out.println("Too few input numbers. (´;︵;`)");
             return null;
         }
 
         input = scanner.next();
         for (int i = 0; i < input.length(); i++) {
             if (Character.getType(input.charAt(i)) != Character.DECIMAL_DIGIT_NUMBER && input.charAt(i) != '-') {
-                System.out.println("`" + input + "` is not a number. Please, enter decimal digits.");
+                System.out.println("`" + input + "` is not a number. Please, enter decimal digits. ಠಗಠ");
                 return null;
             }
         }
 
-        int x = Integer.parseInt(input);
+        int x;
+        try {
+            x = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid format number `" + input + "`. (╯°□°）╯ ┻━┻");
+            return null;
+        }
         if (x < min) {
-            System.out.println("Invalid number. The number is less than expected (" + x + " < " + min + ")");
+            System.out.println("The number `" + input +
+                    "` is less than expected (" + x + " < " + min + ") <(￣︶￣)↗");
             return null;
         } else if (x > max) {
-            System.out.println("Invalid number. The number is larger than expected (" + x + " > " + max + ")");
+            System.out.println("The number `" + input +
+                    "` is larger than expected (" + x + " > " + max + ") <(￣︶￣)↘");
             return null;
         }
 
         return x;
+    }
+
+    static String getString(Scanner scanner, String whatToEnter) {
+        String line = null;
+
+        System.out.println("Enter " + whatToEnter + ":");
+        try {
+            line = scanner.nextLine();
+            if (line.isEmpty()) {
+                return "/╲/\\╭(•‿•)╮/\\╱\\";
+            }
+        } catch (NoSuchElementException e) {
+            System.out.println("Please don't press Ctrl+D. It makes me cry. (╥﹏╥)");
+            System.exit(666);
+        }
+
+        return line;
     }
 
     static double log2(int x) {

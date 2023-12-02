@@ -42,8 +42,7 @@ public class ReverseSumHexAbc {
     private static void parseWord(String word, IntList ints) {
         if (word.charAt(0) == '0' && (word.charAt(1) == 'x' || word.charAt(1) == 'X')) {
             ints.append(Integer.parseUnsignedInt(word.substring(2), 16));
-        }
-        else {
+        } else {
             StringBuilder builder = new StringBuilder();
             boolean minus = (Character.getType(word.charAt(0)) == Character.DASH_PUNCTUATION);
             if (minus) {

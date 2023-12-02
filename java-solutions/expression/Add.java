@@ -7,7 +7,7 @@ public class Add extends AddSubtract {
 
     @Override
     char sign() {
-        return '+';
+        return PLUS;
     }
 
     @Override

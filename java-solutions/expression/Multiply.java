@@ -7,7 +7,7 @@ public class Multiply extends MultDivide {
 
     @Override
     char sign() {
-        return '*';
+        return MULT;
     }
 
     @Override

@@ -6,8 +6,7 @@ public final class SumLongSpace {
             for (int i = 0; i <= line.length(); i++) {
                 if (i != line.length() && !isSpace(line.charAt(i))) {
                     builder.append(line.charAt(i));
-                }
-                else if (!builder.isEmpty()) {
+                } else if (!builder.isEmpty()) {
                     sum += Long.parseLong(builder.toString());
                     builder.setLength(0);
                 }

@@ -8,8 +8,7 @@ public final class Sum {
             char c = inputStr.charAt(i);
             if ('0' <= c && c <= '9' || c == '-') {
                 builder.append(c);
-            }
-            else if (!builder.isEmpty()) {
+            } else if (!builder.isEmpty()) {
                 sum += Integer.parseInt(builder.toString());
                 builder.setLength(0);
             }

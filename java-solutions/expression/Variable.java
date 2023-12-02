@@ -2,7 +2,7 @@ package expression;
 
 import java.util.Objects;
 
-public class Variable implements Expression {
+public class Variable implements Expression, ToMiniString {
     private final String name;
 
     public Variable(String name) {
@@ -30,10 +30,5 @@ public class Variable implements Expression {
     @Override
     public String toString() {
         return name;
-    }
-
-    @Override
-    public String toMiniString() {
-        return this.toString();
     }
 }

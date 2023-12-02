@@ -2,7 +2,7 @@ package expression;
 
 import java.util.Objects;
 
-public class Const implements Expression {
+public class Const implements Expression, ToMiniString {
     private final int value;
 
     public Const(int value) {
@@ -30,10 +30,5 @@ public class Const implements Expression {
     @Override
     public String toString() {
         return Integer.toString(value);
-    }
-
-    @Override
-    public String toMiniString() {
-        return this.toString();
     }
 }

@@ -8,7 +8,7 @@ public class Reverse {
     public static void main(String[] args) {
         ArrayList<IntList> list = new ArrayList<>();
 
-        try(Scanner scanner = new Scanner(System.in)) {
+        try (Scanner scanner = new Scanner(System.in)) {
             StringBuilder builder = new StringBuilder();
 
             IntList ints = new IntList();

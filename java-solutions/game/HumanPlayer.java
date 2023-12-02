@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import static game.Util.getInts;
-import static game.Util.getString;
 
 public class HumanPlayer implements Player {
     private final PrintStream out;

@@ -2,7 +2,11 @@ package expression;
 
 import java.util.Objects;
 
-public abstract class Operation implements Expression {
+public abstract class Operation implements Expression, ToMiniString {
+    static protected final char PLUS = '+';
+    static protected final char MINUS = '-';
+    static protected final char MULT = '*';
+    static protected final char DIV = '/';
     public final Expression left;
     public final Expression right;
 
@@ -36,13 +40,13 @@ public abstract class Operation implements Expression {
     @Override
     public String toMiniString() {
         StringBuilder sb = new StringBuilder();
-        if (needBrackets(left, this)) {
+        if (leftNeedsBrackets(left, this)) {
             sb.append('(').append(left.toMiniString()).append(')');
         } else {
             sb.append(left.toMiniString());
         }
         sb.append(' ').append(sign()).append(' ');
-        if (needBrackets(right, this)) {
+        if (rightNeedsBrackets(right, this)) {
             sb.append('(').append(right.toMiniString()).append(')');
         } else {
             sb.append(right.toMiniString());
@@ -50,8 +54,23 @@ public abstract class Operation implements Expression {
         return sb.toString();
     }
 
-    private boolean needBrackets(Expression left, Expression right) {
-        return left instanceof Divide && right instanceof Multiply ||
-                left instanceof AddSubtract && right instanceof MultDivide;
+    private boolean leftNeedsBrackets(Expression left, Operation main) {
+        if (left instanceof Operation leftOp) {
+            char sign = main.sign();
+            char oSign = leftOp.sign();
+            return (oSign == PLUS || oSign == MINUS) && (sign == DIV || sign == MULT);
+        }
+        return false;
+    }
+
+    private boolean rightNeedsBrackets(Expression right, Operation main) {
+        if (right instanceof Operation rightOp) {
+            char sign = main.sign();
+            char oSign = rightOp.sign();
+            return (oSign == PLUS || oSign == MINUS || oSign == DIV) && (sign == DIV || sign == MULT) ||
+                    (oSign == DIV || oSign == MULT) && sign == DIV ||
+                    (oSign == PLUS || oSign == MINUS) && sign == MINUS;
+        }
+        return false;
     }
 }

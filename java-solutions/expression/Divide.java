@@ -7,7 +7,7 @@ public class Divide extends MultDivide {
 
     @Override
     char sign() {
-        return '/';
+        return DIV;
     }
 
     @Override
