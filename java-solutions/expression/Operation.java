@@ -2,15 +2,15 @@ package expression;
 
 import java.util.Objects;
 
-public abstract class Operation implements Expression, ToMiniString {
+public abstract class Operation implements MyExpression {
     static protected final char PLUS = '+';
     static protected final char MINUS = '-';
     static protected final char MULT = '*';
     static protected final char DIV = '/';
-    public final Expression left;
-    public final Expression right;
+    public final MyExpression left;
+    public final MyExpression right;
 
-    Operation(Expression left, Expression right) {
+    Operation(MyExpression left, MyExpression right) {
         this.left = left;
         this.right = right;
     }
@@ -25,10 +25,10 @@ public abstract class Operation implements Expression, ToMiniString {
 
     @Override
     public int hashCode() {
-        return ((Objects.hash(sign()) * 17 + Objects.hash(left)) * 17 + Objects.hash(right)) % 2147483647;
+        return ((sign() * 89 + left.hashCode()) * 19 + right.hashCode()) * 7 % 2147483647;
     }
 
-    abstract char sign();
+    protected abstract char sign();
 
     @Override
     public String toString() {
@@ -40,13 +40,13 @@ public abstract class Operation implements Expression, ToMiniString {
     @Override
     public String toMiniString() {
         StringBuilder sb = new StringBuilder();
-        if (leftNeedsBrackets(left, this)) {
+        if (leftNeedsBrackets()) {
             sb.append('(').append(left.toMiniString()).append(')');
         } else {
             sb.append(left.toMiniString());
         }
         sb.append(' ').append(sign()).append(' ');
-        if (rightNeedsBrackets(right, this)) {
+        if (rightNeedsBrackets()) {
             sb.append('(').append(right.toMiniString()).append(')');
         } else {
             sb.append(right.toMiniString());
@@ -54,23 +54,7 @@ public abstract class Operation implements Expression, ToMiniString {
         return sb.toString();
     }
 
-    private boolean leftNeedsBrackets(Expression left, Operation main) {
-        if (left instanceof Operation leftOp) {
-            char sign = main.sign();
-            char oSign = leftOp.sign();
-            return (oSign == PLUS || oSign == MINUS) && (sign == DIV || sign == MULT);
-        }
-        return false;
-    }
+    protected abstract boolean leftNeedsBrackets();
 
-    private boolean rightNeedsBrackets(Expression right, Operation main) {
-        if (right instanceof Operation rightOp) {
-            char sign = main.sign();
-            char oSign = rightOp.sign();
-            return (oSign == PLUS || oSign == MINUS || oSign == DIV) && (sign == DIV || sign == MULT) ||
-                    (oSign == DIV || oSign == MULT) && sign == DIV ||
-                    (oSign == PLUS || oSign == MINUS) && sign == MINUS;
-        }
-        return false;
-    }
+    protected abstract boolean rightNeedsBrackets();
 }

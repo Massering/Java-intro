@@ -16,3 +16,7 @@ prog-intro.iml
 base*
 *Test*
 /java-solutions/expression/common/
+BigIntegerExpression.java
+TripleExpression.java
+Expression.java
+

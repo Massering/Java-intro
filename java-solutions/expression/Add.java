@@ -1,17 +1,34 @@
 package expression;
 
+import java.math.BigInteger;
+
 public class Add extends AddSubtract {
-    Add(Expression left, Expression right) {
+    public Add(MyExpression left, MyExpression right) {
         super(left, right);
     }
 
     @Override
-    char sign() {
+    protected boolean rightNeedsBrackets() {
+        return false;
+    }
+
+    @Override
+    protected char sign() {
         return PLUS;
     }
 
     @Override
     public int evaluate(int x) {
         return left.evaluate(x) + right.evaluate(x);
+    }
+
+    @Override
+    public BigInteger evaluate(BigInteger x) {
+        return left.evaluate(x).add(right.evaluate(x));
+    }
+
+    @Override
+    public int evaluate(int x, int y, int z) {
+        return left.evaluate(x, y, z) + right.evaluate(x, y, z);
     }
 }
