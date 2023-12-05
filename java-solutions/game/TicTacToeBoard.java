@@ -7,7 +7,7 @@ public class TicTacToeBoard implements Board {
             Cell.X, " X ",
             Cell.O, " O ",
             Cell.E, " . ",
-            Cell.D, "   "
+            Cell.D, " # "
     );
 
     private final int n;
@@ -113,8 +113,8 @@ public class TicTacToeBoard implements Board {
     }
 
     private boolean isInCircle(int i, int j) {
-        int center = (n - 1) / 2;
-        return (center - i) * (center - i) + (center - j) * (center - j) < (n - 1) * (n - 1) / 4;
+        float center = (float) (n - 1) / 2;
+        return (center - i) * (center - i) + (center - j) * (center - j) < n * (n - 1) / 4;
     }
 
     private boolean isValidCell(int i, int j) {
