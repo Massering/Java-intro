@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Objects;
 
 public class Const implements MyExpression {
+    //:NOTE: достаточно хранить только одно значение
     private final BigInteger bigValue;
     private final int value;
 

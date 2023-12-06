@@ -17,6 +17,7 @@ public class Add extends AddSubtract {
         return PLUS;
     }
 
+    //:NOTE: не вынесен общий код
     @Override
     public int evaluate(int x) {
         return left.evaluate(x) + right.evaluate(x);

@@ -32,6 +32,7 @@ public abstract class Operation implements MyExpression {
 
     @Override
     public String toString() {
+        //:NOTE: O(n^2)
         StringBuilder sb = new StringBuilder();
         sb.append('(').append(left).append(' ').append(sign()).append(' ').append(right).append(')');
         return sb.toString();
@@ -39,6 +40,7 @@ public abstract class Operation implements MyExpression {
 
     @Override
     public String toMiniString() {
+        //:NOTE: O(n^2)
         StringBuilder sb = new StringBuilder();
         if (leftNeedsBrackets()) {
             sb.append('(').append(left.toMiniString()).append(')');
