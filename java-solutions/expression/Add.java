@@ -8,8 +8,13 @@ public class Add extends AddSubtract {
     }
 
     @Override
-    protected boolean rightNeedsBrackets() {
-        return false;
+    public BigInteger evaluate(BigInteger left, BigInteger right) {
+        return left.add(right);
+    }
+
+    @Override
+    public int evaluate(int left, int right) {
+        return left + right;
     }
 
     @Override
@@ -17,19 +22,8 @@ public class Add extends AddSubtract {
         return PLUS;
     }
 
-    //:NOTE: не вынесен общий код
     @Override
-    public int evaluate(int x) {
-        return left.evaluate(x) + right.evaluate(x);
-    }
-
-    @Override
-    public BigInteger evaluate(BigInteger x) {
-        return left.evaluate(x).add(right.evaluate(x));
-    }
-
-    @Override
-    public int evaluate(int x, int y, int z) {
-        return left.evaluate(x, y, z) + right.evaluate(x, y, z);
+    protected boolean rightNeedsBrackets() {
+        return false;
     }
 }

@@ -4,18 +4,34 @@ import java.math.BigInteger;
 import java.util.Objects;
 
 public class Const implements MyExpression {
-    //:NOTE: достаточно хранить только одно значение
-    private final BigInteger bigValue;
-    private final int value;
+    private final Number value;
 
     public Const(int value) {
-        this.bigValue = BigInteger.valueOf(value);
         this.value = value;
     }
 
     public Const(BigInteger value) {
-        this.bigValue = value;
-        this.value = value.intValue();
+        this.value = value;
+    }
+
+    @Override
+    public int evaluate(int x) {
+        return value.intValue();
+    }
+
+    @Override
+    public String toString() {
+        return value.toString();
+    }
+
+    @Override
+    public BigInteger evaluate(BigInteger x) {
+        return (BigInteger) value;
+    }
+
+    @Override
+    public int evaluate(int x, int y, int z) {
+        return value.intValue();
     }
 
     @Override
@@ -23,31 +39,11 @@ public class Const implements MyExpression {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Const aConst = (Const) o;
-        return Objects.equals(bigValue, aConst.bigValue);
+        return Objects.equals(value, aConst.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value * 17);
-    }
-
-    @Override
-    public int evaluate(int x) {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return bigValue.toString();
-    }
-
-    @Override
-    public BigInteger evaluate(BigInteger x) {
-        return bigValue;
-    }
-
-    @Override
-    public int evaluate(int x, int y, int z) {
-        return value;
+        return Objects.hash(value.intValue() * 17);
     }
 }

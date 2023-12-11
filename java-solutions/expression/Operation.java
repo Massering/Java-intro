@@ -1,5 +1,6 @@
 package expression;
 
+import java.math.BigInteger;
 import java.util.Objects;
 
 public abstract class Operation implements MyExpression {
@@ -14,6 +15,25 @@ public abstract class Operation implements MyExpression {
         this.left = left;
         this.right = right;
     }
+
+    @Override
+    public int evaluate(int x) {
+        return evaluate(left.evaluate(x), right.evaluate(x));
+    }
+
+    @Override
+    public BigInteger evaluate(BigInteger x) {
+        return evaluate(left.evaluate(x), right.evaluate(x));
+    }
+
+    @Override
+    public int evaluate(int x, int y, int z) {
+        return evaluate(left.evaluate(x, y, z), right.evaluate(x, y, z));
+    }
+
+    protected abstract int evaluate(int left, int right);
+
+    protected abstract BigInteger evaluate(BigInteger left, BigInteger right);
 
     @Override
     public boolean equals(Object o) {
